@@ -1,5 +1,7 @@
 # anchor-check
 
+[![test](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml)
+
 An AI agent will build from a plan that points to code that doesn't exist. That's what mine did: the plan named a file that wasn't there, so the agent created it from scratch to match, and two rounds of AI review had already signed off, because they were judging whether the plan sounded right, not whether it matched the real code.
 
 anchor-check is the cheap check that would have caught it. It reads a plan (or any document) and finds every place that points to a specific file and line, like `src/auth.ts:340`, then makes sure each one is real: the file exists, and that line is actually in it. It doesn't use a model, it runs in a second or two, and it's about 90 lines of bash.
