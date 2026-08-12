@@ -2,9 +2,23 @@
 
 [![test](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml)
 
-An AI agent will build from a plan that points to code that doesn't exist. That's what mine did: the plan named a file that wasn't there, so the agent created it from scratch to match, and two rounds of AI review had already signed off, because they were judging whether the plan sounded right, not whether it matched the real code.
+A check that reads a plan and makes sure every file and line it points at is really there.
 
-anchor-check is the cheap check that would have caught it. It reads a plan (or any document) and finds every place that points to a specific file and line, like `src/auth.ts:340`, then makes sure each one is real: the file exists, and that line is actually in it. It doesn't use a model, it runs in a second or two, and it's about 90 lines of bash.
+## Why I built it
+
+Two reviewers approved a plan built around a file that did not exist. The agent that read it next saw the file was missing and wrote it from scratch to match.
+
+Neither agent was wrong, exactly. Both were doing what they were told.
+
+What bothered me was how far it got. The reviewers were reading for whether the approach made sense, which it did. Nobody checked whether the files were real, because checking that is dull and neither of them thought it was their job.
+
+If agents write plans in your harness and anyone approves them before the work starts, this is already possible for you. A reference to `src/auth.ts:340` looks like evidence. It reads as though someone went and looked.
+
+## How it works
+
+It reads a document and pulls out every reference that points at a specific file and line, the `src/auth.ts:340` shape. For each one it checks two things: that the file exists, and that the file is long enough to have that line in it.
+
+No model involved. It takes a second or two, and it's about 90 lines of shell.
 
 ```console
 $ anchor-check.sh plan.md ./repo
@@ -16,34 +30,36 @@ $ echo $?
 1
 ```
 
-## Use it if
+Finding the file is the part that needed care. It tries the exact path first. If that misses and you're in a git repo, it searches by filename, so a plan that says `checkout.ts` still resolves when the file lives three folders deep. Failing that it falls back to a plain search of the tree.
 
-You've got an agent writing plans, specs, or design docs that point at real code, and someone reviews them before anyone builds, whether that reviewer is a person or another agent. Anywhere a made-up file-and-line reference can slip past a reviewer who's checking whether the idea makes sense, not whether the files are actually there.
+## Install
+
+There's nothing to install. It's one shell script and it uses what's already on your machine.
 
 ```
-anchor-check.sh <doc-file> [repo-root]      # repo-root defaults to $PWD
+anchor-check.sh <doc-file> [repo-root]      # repo-root defaults to the current folder
 # exit 0  every reference is real
-# exit 1  a reference points at a missing file or a line past the end (it names which)
+# exit 1  a reference points at a missing file, or past the end of one, and it names which
 # exit 64 you called it wrong
 ```
 
-It looks for each file three ways: the exact path first, then a search by filename if you're in a git repo, then a plain file search. The tests have a worked example of each.
+Use it wherever an agent writes a plan that someone reviews before anyone builds from it, whether that reviewer is a person or another agent. The exit code makes it easy to put in front of an approval step.
 
 ## What it won't do
 
-- It catches made-up references, not stale ones. If a line number just shifted because the file changed but the file still exists, it passes. It proves the reference is real, not that it still points at the right thing.
-- It only checks explicit file-and-line references like `path.ext:12`. Plain filenames and prose are skipped on purpose.
-- One thing it gets wrong: something like `example.com:8080` in your text looks like a file reference to it. Keep those out of your prose, or expect to wave off a flagged line. I left it in the open rather than loosening the rule to hide it. The reasoning is in [docs/ADR.md](docs/ADR.md).
+- It catches invented references, not stale ones. If a line number drifted because the file changed but the file is still there, it passes. It proves a reference is real, not that it still points at the right thing.
+- It only looks at explicit file-and-line references. Plain filenames and ordinary prose are skipped on purpose, because guessing which words are filenames produces more noise than it's worth.
+- Something like `example.com:8080` in your text reads as a file reference to it, and gets flagged. I left that in the open rather than loosening the rule to hide it, since the looser rule would also start missing real problems. The reasoning is in [docs/ADR.md](docs/ADR.md).
 
 ## How I tested it
 
-You can run the test suite offline:
+The suite runs offline, no accounts or network:
 
 ```
-bash tests/test-anchor-check.sh    # 8 checks
+bash tests/test-anchor-check.sh
 ```
 
-It covers a plan with real references, a made-up file, a line past the end of a file, the exact-last-line edge case, the filename search, and the ways you can call it wrong.
+8 cases: a plan whose references are all real, an invented file, a line past the end of a real file, the exact-last-line boundary, the filename search finding something the exact path missed, and the ways you can call it wrong.
 
 ## License
 
