@@ -47,9 +47,11 @@ Use it wherever an agent writes a plan that someone reviews before anyone builds
 
 ## What it won't do
 
-- It catches invented references, not stale ones. If a line number drifted because the file changed but the file is still there, it passes. It proves a reference is real, not that it still points at the right thing.
-- It only looks at explicit file-and-line references. Plain filenames and ordinary prose are skipped on purpose, because guessing which words are filenames produces more noise than it's worth.
-- Something like `example.com:8080` in your text reads as a file reference to it, and gets flagged. I left that in the open rather than loosening the rule to hide it, since the looser rule would also start missing real problems. The reasoning is in [docs/ADR.md](docs/ADR.md).
+It catches invented references, not stale ones. If a line number drifted because the file changed but the file is still there, it passes. It proves a reference is real, not that it still points at the right thing.
+
+It only looks at explicit file-and-line references. Plain filenames and ordinary prose are skipped on purpose, because guessing which words are filenames produces more noise than it's worth.
+
+Something like `example.com:8080` in your text reads as a file reference to it, and gets flagged. I left that in the open rather than loosening the rule to hide it, since the looser rule would also start missing real problems. The reasoning is in [docs/ADR.md](docs/ADR.md).
 
 ## How I tested it
 
