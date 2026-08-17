@@ -2,23 +2,21 @@
 
 [![test](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml)
 
-A check that reads a plan and makes sure every file and line it points at is really there.
+Two agent reviewers approved a plan built around a file that didn't exist. The agent that built from it didn't blink either, it just wrote the file from scratch to match.
 
-## Why I built it
+Nobody was careless. Everyone was reading for whether the approach made sense, and with agents writing and reviewing in parallel, checking that the files were real was nobody's job. A made-up reference to `src/auth.ts:340` reads like evidence.
 
-Two reviewers approved a plan built around a file that did not exist. The agent that read it next saw the file was missing and wrote it from scratch to match.
+So this is that check, about 90 lines of shell that reads a plan and makes sure every file and line it points at is really there.
 
-Neither agent was wrong, exactly. Both were doing what they were told.
+## Use it if
 
-What bothered me was how far it got. The reviewers were reading for whether the approach made sense, which it did. Nobody checked whether the files were real, because checking that is dull and neither of them thought it was their job.
-
-If agents write plans in your harness and anyone approves them before the work starts, this is already possible for you. A reference to `src/auth.ts:340` looks like evidence. It reads as though someone went and looked.
+You've got an agent writing plans, specs, or design docs that point at real code, and someone reviews them before anyone builds, whether that reviewer is a person or another agent. Anywhere a made-up file-and-line reference can slip past a reviewer who's checking whether the idea makes sense, not whether the files are actually there.
 
 ## How it works
 
 It reads a document and pulls out every reference that points at a specific file and line, the `src/auth.ts:340` shape. For each one it checks two things: that the file exists, and that the file is long enough to have that line in it.
 
-No model involved. It takes a second or two, and it's about 90 lines of shell.
+No model involved, and it takes a second or two.
 
 ```console
 $ anchor-check.sh plan.md ./repo
