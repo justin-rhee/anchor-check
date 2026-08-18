@@ -2,7 +2,7 @@
 
 [![test](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml/badge.svg)](https://github.com/justin-rhee/anchor-check/actions/workflows/test.yml)
 
-Two agent reviewers approved a plan built around a file that didn't exist. The agent that built from it didn't blink either, it just wrote the file from scratch to match.
+Two agent reviewers approved a plan built around a file that didn't exist. The agent that built from it didn't blink either, it just wrote the file from scratch to match
 
 Nobody was careless. Everyone was reading for whether the approach made sense, and with agents writing and reviewing in parallel, checking that the files were real was nobody's job. A made-up reference to `src/auth.ts:340` reads like evidence.
 
@@ -67,4 +67,4 @@ MIT. See [LICENSE](LICENSE). No warranty. Security notes and how to report a pro
 
 ---
 
-One of a set of small tools I've pulled out of a bigger system I run, where agents write the code and plain scripts decide when it's actually done. They all share one rule: the machine suggests, a person decides, and nothing quietly goes wrong behind your back. More of them on my [GitHub profile](https://github.com/justin-rhee).
+One of a set of small tools I've pulled out of a bigger system I run, where agents write the code and plain scripts decide when it's actually done. I keep the final call for myself, and I'd rather a check be annoying than silent. More of them on my [GitHub profile](https://github.com/justin-rhee).

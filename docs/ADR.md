@@ -35,8 +35,9 @@ the file. A line that just moved inside a file that still exists passes. And I s
 that plainly in the usage and the README.
 
 The check stays fast and never claims more than it proves. Line numbers get checked
-here; the meaning behind them stays the reviewer's job. A cheap check that names its
-own ceiling beats an expensive one that hides it.
+here; the meaning behind them stays the reviewer's job. I'd rather ship something
+cheap that tells you where it stops than something thorough that leaves you
+guessing about it.
 
 ## 3. Find the file three ways, fail closed, and own the one false positive
 
